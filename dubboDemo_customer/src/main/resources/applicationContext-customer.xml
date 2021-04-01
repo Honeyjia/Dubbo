@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+">
+
+    <!-- 消费方名称-->
+    <dubbo:application name="dubboDemo_customer"></dubbo:application>
+
+    <!-- 配置服务注册中心 地址和端口信息-->
+    <dubbo:registry address="zookeeper://192.168.147.129:2181"></dubbo:registry>
+
+    <!-- 配置包扫描-->
+    <dubbo:annotation package="com.jiacool.controller"/>
+
+<!--     生成远程服务代理，可以和本地bean一样使用helloService -->
+    <dubbo:reference interface="com.jiacool.service.HelloService" id="helloService"/>
+
+    <!-- 启动时不检查依赖的服务是否可用， 不严格要求启动顺序
+    默认check为true
+     -->
+    <dubbo:consumer check="false" />
+</beans>

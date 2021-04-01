@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+">
+
+    <!-- 指定名称，每个Dubbo应用（消费方和服务方）都必须指定一个唯一的名称-->
+    <dubbo:application name="dubboDemo_provider"></dubbo:application>
+
+    <!-- 指定服务的注册中心 zookeeper-->
+    <dubbo:registry address="zookeeper://192.168.147.129:2181"></dubbo:registry>
+
+    <!-- 配置协议 和 端口，默认端口是20880 -->
+    <dubbo:protocol name="dubbo" port="20880"></dubbo:protocol>
+    <dubbo:protocol name="rmi" port="1099"></dubbo:protocol>
+
+    <!-- 指定包扫描，用来发布 Dubbo 服务
+    加入@Service注解的类会被发布为服务
+     -->
+        <dubbo:annotation package="com.jiacool.service.impl"/>
+
+    <!-- 使用xml文件配置方式来发布服务 -->
+   <!-- <bean id="helloService" class="com.jiacool.service.impl.HelloServiceImpl"></bean>
+    <dubbo:service interface="com.jiacool.service.HelloService" ref="helloService" protocol="dubbo"/>-->
+
+    <!--配置数据源 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/test"/>
+        <property name="username" value="root"/>
+        <property name="password" value="123456"/>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 开启事务注解支持 -->
+    <!-- 开启事务时，指定proxy-target-class属性，值为true。
+    目的是指定使用cglib代理方式，为service类创建代理对象-->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+</beans>
